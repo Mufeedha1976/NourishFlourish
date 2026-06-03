@@ -1,9 +1,9 @@
-/* Custom Core Variables (Sage / Earth Design Guidelines) */
+/* Core Custom Properties */
 :root {
-    --bg-color: #fafdfa;         /* Muted crisp herbal off-white */
-    --text-color: #2d3748;       /* Deep stone gray text for optimal readability */
-    --primary-color: #4a6b52;    /* Matte Sage Green */
-    --accent-color: #bfa38a;     /* Soft warm desert sand hue */
+    --bg-color: #fafdfa;         
+    --text-color: #2d3748;       
+    --primary-color: #4a6b52;    
+    --accent-color: #bfa38a;     
     --card-bg: #ffffff;
     --border-color: #e2e8f0;
 }
@@ -19,7 +19,7 @@ body {
     line-height: 1.7;
     background-color: var(--bg-color);
     color: var(--text-color);
-    overflow-x: hidden; /* Prevents accidental horizontal scrolling on mobile */
+    overflow-x: hidden;
 }
 
 h1, h2, h3, nav a, .post-category, .read-more {
@@ -27,7 +27,7 @@ h1, h2, h3, nav a, .post-category, .read-more {
     letter-spacing: -0.01em;
 }
 
-/* Header & Navigation Identity Structures */
+/* Header & Identity Styles */
 header {
     background-color: #ffffff;
     border-bottom: 1px solid var(--border-color);
@@ -38,7 +38,7 @@ header {
 
 .logo-area h1 {
     color: var(--primary-color);
-    font-size: clamp(1.8rem, 4vw, 2.65rem); /* Dynamically shrinks font size down on smaller screens */
+    font-size: clamp(1.8rem, 4vw, 2.65rem);
     font-weight: 700;
     margin-bottom: 0.5rem;
     text-transform: lowercase;
@@ -61,9 +61,9 @@ nav {
     border-top: 1px solid #f1f5f9;
     padding-top: 1.25rem;
     display: flex;
-    flex-wrap: wrap; /* Wraps nav links automatically if they run out of mobile width */
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 10px 20px; /* Provides safe structural vertical and horizontal spacing */
+    gap: 10px 20px;
 }
 
 nav a {
@@ -80,15 +80,15 @@ nav a:hover {
     color: var(--primary-color);
 }
 
-/* Layout Constraint Architecture */
+/* Layout Framework */
 .container {
     width: 100%;
     max-width: 840px;
     margin: clamp(2rem, 6vw, 3.5rem) auto;
-    padding: 0 1rem; /* Adds defensive safe spaces on the left/right boundaries */
+    padding: 0 1rem;
 }
 
-/* Editorial Fluid Card Component */
+/* Responsive Blog Post Card Component */
 .post-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -97,7 +97,7 @@ nav a:hover {
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     display: flex;
-    flex-direction: column; /* Stacks image straight over text block gracefully */
+    flex-direction: column;
     width: 100%;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -107,18 +107,17 @@ nav a:hover {
     box-shadow: 0 15px 30px rgba(74, 107, 82, 0.06);
 }
 
-/* Fluid Responsive Post Imagery Layer */
+/* Fluid Post Image Management */
 .post-image {
     width: 100%;
-    height: clamp(200px, 40vw, 380px); /* Seamlessly transitions image height across device profiles */
+    height: clamp(200px, 40vw, 380px);
     object-fit: cover;
     display: block;
     border-bottom: 1px solid var(--border-color);
 }
 
-/* Card Text Boundaries */
 .post-card-content {
-    padding: clamp(1.5rem, 5vw, 2.75rem); /* Drastically cuts down internal white space on smartphones */
+    padding: clamp(1.5rem, 5vw, 2.75rem);
 }
 
 .post-category {
@@ -132,19 +131,19 @@ nav a:hover {
 }
 
 .post-card h2 {
-    font-size: clamp(1.4rem, 3.5vw, 1.95rem); /* Ensures titles fit perfectly on single/double mobile lines */
+    font-size: clamp(1.4rem, 3.5vw, 1.95rem);
     margin-bottom: 0.85rem;
     line-height: 1.35;
     font-weight: 700;
 }
 
-.post-card h2 a {
+.toggle-trigger {
     color: var(--text-color);
     text-decoration: none;
     transition: color 0.15s ease;
 }
 
-.post-card h2 a:hover {
+.toggle-trigger:hover {
     color: var(--primary-color);
 }
 
@@ -154,9 +153,17 @@ nav a:hover {
     margin-bottom: 1.25rem;
 }
 
-.post-content {
-    font-size: clamp(1rem, 2vw, 1.125rem); /* Scales down font thickness on tiny displays */
+.post-content, .full-content {
+    font-size: clamp(1rem, 2vw, 1.125rem);
     color: #4a5568;
+}
+
+.full-content p {
+    margin-bottom: 1.25rem;
+}
+
+.full-content p:last-child {
+    margin-bottom: 0;
 }
 
 .read-more {
@@ -172,7 +179,40 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* System State Presentation Layers */
+/* Floating Back to Top Button Element */
+#back-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    outline: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease, background-color 0.2s ease;
+    zIndex: 999;
+}
+
+#back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+#back-to-top:hover {
+    background-color: var(--text-color);
+}
+
+/* Layout Utilities */
 .loading, .error {
     text-align: center;
     font-size: 1.15rem;
@@ -181,7 +221,6 @@ nav a:hover {
     background: #ffffff;
     border-radius: 12px;
     border: 1px solid var(--border-color);
-    margin: 0 1rem;
 }
 
 footer {
@@ -194,15 +233,10 @@ footer {
     color: #718096;
 }
 
-/* Specific Extra Optimization For Ultra-Narrow Screens (Phones under 400px width) */
+/* Viewport Adjustments for Small Mobile Form Factors */
 @media (max-width: 400px) {
-    nav {
-        gap: 8px 12px;
-    }
-    nav a {
-        font-size: 0.75rem;
-    }
-    .post-card-content {
-        padding: 1.25rem;
-    }
+    nav { gap: 8px 12px; }
+    nav a { font-size: 0.75rem; }
+    .post-card-content { padding: 1.25rem; }
+    #back-to-top { bottom: 15px; right: 15px; width: 40px; height: 40px; font-size: 1.1rem; }
 }
