@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="post-content">
                                 <p>${post.excerpt}</p>
                             </div>
-                            <a href="${post.link}" class="read-more">Continue Reading &rarr;</a>
+                                <a href="javascript:void(0);" class="read-more" data-id="${post.id}">Continue Reading &rarr;</a>
                         </div>
                     </article>
                 `).join("");
