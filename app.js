@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const siteTagline = document.getElementById("site-tagline");
     const backToTopBtn = document.getElementById("back-to-top");
 
-    // 1. Fetch JSON Content Layer using clean relative pathing
+    // 1. Fetch JSON Content Layer
     fetch("data.json")
         .then(response => {
             if (!response.ok) {
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (siteTitle) siteTitle.textContent = data.siteName || "nourish & flourish";
             if (siteTagline) siteTagline.textContent = data.tagline || "";
 
-            // Render Navigation Menu Links
+            // FIXED: Changed item.url to item.link to match data.json precisely
             if (navContainer && data.navigation) {
                 navContainer.innerHTML = data.navigation.map(item => 
                     `<a href="${item.link}">${item.label}</a>`
@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         
                         <div class="post-card-content">
                             <span class="post-category">${post.category}</span>
+                            
                             <h2><a href="javascript:void(0);" class="toggle-trigger" data-id="${post.id}">${post.title}</a></h2>
                             <div class="post-meta">Shared on <time datetime="${post.datetime}">${post.date}</time></div>
                             
@@ -49,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </article>
                 `).join("");
 
-                // Bind the interactive listeners now that elements exist in DOM
+                // Setup events after structural rendering
                 setupReadingToggle();
             } else {
                 postsContainer.innerHTML = '<div class="error">No posts found.</div>';
@@ -62,10 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-    // 2. Inline Post Visibility Toggle Logic
+    // 2. Inline Visibility Logic Container
     function setupReadingToggle() {
         postsContainer.addEventListener("click", (e) => {
-            // Intercept clicks on either the button or the post title
+            // Target tracking check
             if (e.target.classList.contains("read-more") || e.target.classList.contains("toggle-trigger")) {
                 e.preventDefault();
                 
@@ -74,38 +75,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 const contentDiv = document.getElementById(`content-${postId}`);
                 const readMoreBtn = document.querySelector(`.read-more[data-id="${postId}"]`);
                 
-                if (contentDiv.style.display === "none") {
-                    // Open view state
-                    contentDiv.style.display = "block";
-                    excerptDiv.style.display = "none";
-                    if (readMoreBtn) readMoreBtn.innerHTML = "&larr; Show Less";
-                } else {
-                    // Close view state
-                    contentDiv.style.display = "none";
-                    excerptDiv.style.display = "block";
-                    if (readMoreBtn) readMoreBtn.innerHTML = "Continue Reading &rarr;";
-                    
-                    // Automatically scroll smoothly back up to the header of this post card
-                    document.getElementById(`post-${postId}`).scrollIntoView({ behavior: 'smooth' });
+                if (contentDiv && excerptDiv) {
+                    if (contentDiv.style.display === "none") {
+                        contentDiv.style.display = "block";
+                        excerptDiv.style.display = "none";
+                        if (readMoreBtn) readMoreBtn.innerHTML = "&larr; Show Less";
+                    } else {
+                        contentDiv.style.display = "none";
+                        excerptDiv.style.display = "block";
+                        if (readMoreBtn) readMoreBtn.innerHTML = "Continue Reading &rarr;";
+                        
+                        document.getElementById(`post-${postId}`).scrollIntoView({ behavior: 'smooth' });
+                    }
                 }
             }
         });
     }
 
-    // 3. Floating Back to Top Button Engine
-    window.addEventListener("scroll", () => {
-        // Appears if scrolled past 400px down the window viewport
-        if (window.scrollY > 400) {
-            backToTopBtn.classList.add("visible");
-        } else {
-            backToTopBtn.classList.remove("visible");
-        }
-    });
-
-    backToTopBtn.addEventListener("click", () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
+    // 3. Back to Top Component
+    if (backToTopBtn) {
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 400) {
+                backToTopBtn.classList.add("visible");
+            } else {
+                backToTopBtn.classList.remove("visible");
+            }
         });
-    });
+
+        backToTopBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
 });
