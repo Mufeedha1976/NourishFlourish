@@ -7,6 +7,7 @@
     --border-color: #e2e8f0;
 }
 
+/* 1. Global Resets & Document Setup */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -21,11 +22,12 @@ body {
     overflow-x: hidden;
 }
 
-h1, h2, h3, nav a, .post-category, .read-more {
+h1, h2, h3, nav a, .post-category, .read-more, #back-to-top, footer h5 {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.01em;
 }
 
+/* 2. Header & Brand Identity Layout */
 header {
     background-color: #ffffff;
     border-bottom: 1px solid var(--border-color);
@@ -41,7 +43,10 @@ header {
     text-transform: lowercase;
 }
 
-.logo-area h1::after { content: '.'; color: var(--accent-color); }
+.logo-area h1::after { 
+    content: '.'; 
+    color: var(--accent-color); 
+}
 
 .tagline {
     font-style: italic;
@@ -50,6 +55,7 @@ header {
     margin-bottom: 1.5rem;
 }
 
+/* 3. Navigation System */
 nav {
     margin-top: 1.5rem;
     border-top: 1px solid #f1f5f9;
@@ -70,8 +76,11 @@ nav a {
     transition: color 0.2s;
 }
 
-nav a:hover { color: var(--primary-color); }
+nav a:hover { 
+    color: var(--primary-color); 
+}
 
+/* 4. Core Layout Structure */
 .container {
     width: 100%;
     max-width: 840px;
@@ -79,6 +88,7 @@ nav a:hover { color: var(--primary-color); }
     padding: 0 1rem;
 }
 
+/* 5. Editorial Blog Cards Modules */
 .post-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -104,7 +114,9 @@ nav a:hover { color: var(--primary-color); }
     border-bottom: 1px solid var(--border-color);
 }
 
-.post-card-content { padding: clamp(1.5rem, 5vw, 2.75rem); }
+.post-card-content { 
+    padding: clamp(1.5rem, 5vw, 2.75rem); 
+}
 
 .post-category {
     display: inline-block;
@@ -128,7 +140,9 @@ nav a:hover { color: var(--primary-color); }
     transition: color 0.15s;
 }
 
-.toggle-trigger:hover { color: var(--primary-color); }
+.toggle-trigger:hover { 
+    color: var(--primary-color); 
+}
 
 .post-meta {
     font-size: 0.85rem;
@@ -136,8 +150,14 @@ nav a:hover { color: var(--primary-color); }
     margin-bottom: 1.25rem;
 }
 
-.full-content p { margin-bottom: 1.25rem; }
-.full-content p:last-child { margin-bottom: 0; }
+/* Handles paragraph styling produced by the app.js formatter */
+.post-excerpt p, .full-content p { 
+    margin-bottom: 1.25rem; 
+}
+
+.post-excerpt p:last-child, .full-content p:last-child { 
+    margin-bottom: 0; 
+}
 
 .read-more {
     display: inline-block;
@@ -148,9 +168,22 @@ nav a:hover { color: var(--primary-color); }
     font-size: 0.95rem;
 }
 
-.read-more:hover { text-decoration: underline; }
+.read-more:hover { 
+    text-decoration: underline; 
+}
 
-/* Floating Back to Top Button Layout Styles */
+/* 6. UI Navigation Utilities (Loading & Errors) */
+.loading, .error {
+    text-align: center;
+    font-size: 1.15rem;
+    color: #718096;
+    padding: 4rem 1.5rem;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+/* 7. Floating Back to Top Button Component */
 #back-to-top {
     position: fixed;
     bottom: 25px;
@@ -179,18 +212,11 @@ nav a:hover { color: var(--primary-color); }
     transform: translateY(0);
 }
 
-#back-to-top:hover { background-color: var(--text-color); }
-
-.loading, .error {
-    text-align: center;
-    font-size: 1.15rem;
-    color: #718096;
-    padding: 4rem 1.5rem;
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+#back-to-top:hover { 
+    background-color: var(--text-color); 
 }
 
+/* 8. Modern Footer Block & Credits */
 footer {
     text-align: center;
     padding: 3rem 1rem;
@@ -201,6 +227,21 @@ footer {
     color: #718096;
 }
 
+footer hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    max-width: 150px;
+    margin: 1.25rem auto;
+}
+
+footer h5 {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4a5568;
+    letter-spacing: 0.02em;
+}
+
+/* 9. Ultra-Responsive Layout Breakthrough Fixes */
 @media (max-width: 400px) {
     nav { gap: 8px 12px; }
     nav a { font-size: 0.75rem; }
