@@ -1,4 +1,3 @@
-/* Core Custom Properties */
 :root {
     --bg-color: #fafdfa;         
     --text-color: #2d3748;       
@@ -15,7 +14,7 @@
 }
 
 body {
-    font-family: "Georgia", Georgia, Cambria, "Times New Roman", Times, serif;
+    font-family: "Georgia", Georgia, Cambria, serif;
     line-height: 1.7;
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -23,17 +22,15 @@ body {
 }
 
 h1, h2, h3, nav a, .post-category, .read-more {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.01em;
 }
 
-/* Header & Identity Styles */
 header {
     background-color: #ffffff;
     border-bottom: 1px solid var(--border-color);
     padding: clamp(2rem, 5vw, 3.5rem) 1rem;
     text-align: center;
-    width: 100%;
 }
 
 .logo-area h1 {
@@ -44,10 +41,7 @@ header {
     text-transform: lowercase;
 }
 
-.logo-area h1::after {
-    content: '.';
-    color: var(--accent-color);
-}
+.logo-area h1::after { content: '.'; color: var(--accent-color); }
 
 .tagline {
     font-style: italic;
@@ -73,14 +67,11 @@ nav a {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    transition: color 0.2s ease;
+    transition: color 0.2s;
 }
 
-nav a:hover {
-    color: var(--primary-color);
-}
+nav a:hover { color: var(--primary-color); }
 
-/* Layout Framework */
 .container {
     width: 100%;
     max-width: 840px;
@@ -88,7 +79,6 @@ nav a:hover {
     padding: 0 1rem;
 }
 
-/* Responsive Blog Post Card Component */
 .post-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -98,7 +88,6 @@ nav a:hover {
     box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     display: flex;
     flex-direction: column;
-    width: 100%;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -107,7 +96,6 @@ nav a:hover {
     box-shadow: 0 15px 30px rgba(74, 107, 82, 0.06);
 }
 
-/* Fluid Post Image Management */
 .post-image {
     width: 100%;
     height: clamp(200px, 40vw, 380px);
@@ -116,9 +104,7 @@ nav a:hover {
     border-bottom: 1px solid var(--border-color);
 }
 
-.post-card-content {
-    padding: clamp(1.5rem, 5vw, 2.75rem);
-}
+.post-card-content { padding: clamp(1.5rem, 5vw, 2.75rem); }
 
 .post-category {
     display: inline-block;
@@ -134,18 +120,15 @@ nav a:hover {
     font-size: clamp(1.4rem, 3.5vw, 1.95rem);
     margin-bottom: 0.85rem;
     line-height: 1.35;
-    font-weight: 700;
 }
 
 .toggle-trigger {
     color: var(--text-color);
     text-decoration: none;
-    transition: color 0.15s ease;
+    transition: color 0.15s;
 }
 
-.toggle-trigger:hover {
-    color: var(--primary-color);
-}
+.toggle-trigger:hover { color: var(--primary-color); }
 
 .post-meta {
     font-size: 0.85rem;
@@ -153,18 +136,8 @@ nav a:hover {
     margin-bottom: 1.25rem;
 }
 
-.post-content, .full-content {
-    font-size: clamp(1rem, 2vw, 1.125rem);
-    color: #4a5568;
-}
-
-.full-content p {
-    margin-bottom: 1.25rem;
-}
-
-.full-content p:last-child {
-    margin-bottom: 0;
-}
+.full-content p { margin-bottom: 1.25rem; }
+.full-content p:last-child { margin-bottom: 0; }
 
 .read-more {
     display: inline-block;
@@ -175,11 +148,9 @@ nav a:hover {
     font-size: 0.95rem;
 }
 
-.read-more:hover {
-    text-decoration: underline;
-}
+.read-more:hover { text-decoration: underline; }
 
-/* Floating Back to Top Button Element */
+/* Floating Back to Top Button Layout Styles */
 #back-to-top {
     position: fixed;
     bottom: 25px;
@@ -198,8 +169,8 @@ nav a:hover {
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease, background-color 0.2s ease;
-    zIndex: 999;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease, background-color 0.2s;
+    z-index: 999;
 }
 
 #back-to-top.visible {
@@ -208,11 +179,8 @@ nav a:hover {
     transform: translateY(0);
 }
 
-#back-to-top:hover {
-    background-color: var(--text-color);
-}
+#back-to-top:hover { background-color: var(--text-color); }
 
-/* Layout Utilities */
 .loading, .error {
     text-align: center;
     font-size: 1.15rem;
@@ -233,7 +201,6 @@ footer {
     color: #718096;
 }
 
-/* Viewport Adjustments for Small Mobile Form Factors */
 @media (max-width: 400px) {
     nav { gap: 8px 12px; }
     nav a { font-size: 0.75rem; }
