@@ -1,0 +1,31 @@
+{
+    "siteName": "Nourish & Flourish",
+    "tagline": "Cultivating wellness, inside and out.",
+    "navigation": [
+        {"label": "Home", "link": "#"},
+        {"label": "Recipes", "link": "#"},
+        {"label": "Mindfulness", "link": "#"},
+        {"label": "About", "link": "#"},
+        {"label": "Contact", "link": "#"}
+    ],
+    "posts": [
+        {
+            "id": 1,
+            "category": "Nutrition",
+            "title": "5 Whole-Food Substitutes to Instantly Elevate Your Daily Energy",
+            "date": "June 3, 2026",
+            "datetime": "2026-06-03",
+            "excerpt": "Transitioning to a whole-food lifestyle doesn't require an overnight kitchen overhaul. By making subtle, nutrient-dense swaps in your morning routine, you can stabilize blood sugar levels and avoid the classic afternoon crash...",
+            "link": "#"
+        },
+        {
+            "id": 2,
+            "category": "Mindset",
+            "title": "The Art of Intentional Mornings: A 10-Minute Routine",
+            "date": "May 28, 2026",
+            "datetime": "2026-05-28",
+            "excerpt": "How we spend the first hour of the day sets the tone for everything that follows. Discover a simple, data-backed 10-minute mindfulness and stretching sequence designed to clear mental clutter before checking your screen...",
+            "link": "#"
+        }
+    ]
+}
