@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ========================================================
     const SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhYAohsI3t3K_yc9aOc272PKRKJXwwwcwo0Un_qgtP_3yyEhtQ-nNic20tkB197t2DWUHiGIlmPQ52/pub?output=csv";
 
-    // Global Site Hardcoded Properties
+    // Global Site Navigation & Theme Properties
     const SITE_CONFIG = {
         "siteName": "nourish & flourish",
         "tagline": "Cultivating wellness, inside and out.",
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ]
     };
 
-    // 1. Render App Context Branding
+    // 1. Render Basic UI Layout Framework 
     if (siteTitle) siteTitle.textContent = SITE_CONFIG.siteName;
     if (siteTagline) siteTagline.textContent = SITE_CONFIG.tagline;
     if (navContainer) {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ).join("");
     }
 
-    // 2. Query Live Database Rows
+    // 2. Fetch Live Rows From Google Sheets
     function loadBlogData() {
         fetch(SPREADSHEET_CSV_URL)
             .then(res => {
@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let row = [""];
         let inQuotes = false;
 
-        // Specialized loop tracking text character coordinates to avoid split boundaries mismatch
         for (let i = 0; i < text.length; i++) {
             let el = text[i];
             let nextEl = text[i+1];
@@ -96,33 +95,49 @@ document.addEventListener("DOMContentLoaded", () => {
         return result;
     }
 
-    // 3. Render Blog Cards 
+    // 🌟 AUTOMATIC FORMATTER: Converts plain text line breaks into HTML paragraphs dynamically
+    function formatToParagraphs(rawText) {
+        if (!rawText) return "";
+        return rawText
+            .split(/\r?\n/)
+            .filter(paragraph => paragraph.trim() !== "")
+            .map(paragraph => `<p>${paragraph.trim()}</p>`)
+            .join("");
+    }
+
+    // 3. Dynamic Blog Feed Render Component
     function renderBlogFeed(posts) {
         if (postsContainer && posts.length > 0) {
-            // Sort items dynamically by ID descending so newest items stay on top
+            // Sort items by ID descending so the newest post ID remains at the top
             const sortedPosts = posts.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
 
-            postsContainer.innerHTML = sortedPosts.map(post => `
-                <article class="post-card" id="post-${post.id}">
-                    ${post.image ? `<img src="${post.image}" alt="${post.title}" class="post-image">` : ''}
-                    
-                    <div class="post-card-content">
-                        <span class="post-category">${post.category}</span>
-                        <h2><a href="javascript:void(0);" class="toggle-trigger" data-id="${post.id}">${post.title}</a></h2>
-                        <div class="post-meta">Shared on <time datetime="${post.datetime}">${post.date}</time></div>
-                        
-                        <div class="post-excerpt" id="excerpt-${post.id}">
-                            <p>${post.excerpt}</p>
-                        </div>
+            postsContainer.innerHTML = sortedPosts.map(post => {
+                // Process plain text column streams into formatted paragraph containers
+                const formattedExcerpt = formatToParagraphs(post.excerpt);
+                const formattedContent = formatToParagraphs(post.content);
 
-                        <div class="full-content" id="content-${post.id}" style="display: none;">
-                            ${post.content}
-                        </div>
+                return `
+                    <article class="post-card" id="post-${post.id}">
+                        ${post.image ? `<img src="${post.image}" alt="${post.title}" class="post-image">` : ''}
                         
-                        <a href="javascript:void(0);" class="read-more" data-id="${post.id}">Continue Reading &rarr;</a>
-                    </div>
-                </article>
-            `).join("");
+                        <div class="post-card-content">
+                            <span class="post-category">${post.category}</span>
+                            <h2><a href="javascript:void(0);" class="toggle-trigger" data-id="${post.id}">${post.title}</a></h2>
+                            <div class="post-meta">Shared on <time datetime="${post.datetime}">${post.date}</time></div>
+                            
+                            <div class="post-excerpt" id="excerpt-${post.id}">
+                                ${formattedExcerpt}
+                            </div>
+
+                            <div class="full-content" id="content-${post.id}" style="display: none;">
+                                ${formattedContent}
+                            </div>
+                            
+                            <a href="javascript:void(0);" class="read-more" data-id="${post.id}">Continue Reading &rarr;</a>
+                        </div>
+                    </article>
+                `;
+            }).join("");
 
             setupReadingToggle();
         } else {
@@ -130,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 4. Inline Visibility Controller Framework
+    // 4. Inline Content Visibility Controller
     function setupReadingToggle() {
         postsContainer.addEventListener("click", (e) => {
             const target = e.target;
@@ -151,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         excerptDiv.style.display = "block";
                         if (readMoreBtn) readMoreBtn.innerHTML = "Continue Reading &rarr;";
                         
-                        // Automatically return view scroll positioning safely to top of selected post module
+                        // Smoothly scroll the page window context back up to the top of the reading box
                         document.getElementById(`post-${id}`).scrollIntoView({ behavior: 'smooth' });
                     }
                 }
@@ -159,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 5. Scroll Elevation Tracking Back to Top Engine Component
+    // 5. Scroll Elevation Tracking Back to Top Module
     if (backToTopBtn) {
         window.addEventListener("scroll", () => {
             if (window.scrollY > 400) {
