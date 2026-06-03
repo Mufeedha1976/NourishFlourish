@@ -1,7 +1,7 @@
 /* Custom Core Variables (Sage / Earth Design Guidelines) */
 :root {
     --bg-color: #fafdfa;         /* Muted crisp herbal off-white */
-    --text-color: #2d3748;       /* Deep stone gray text for optimal readability scale */
+    --text-color: #2d3748;       /* Deep stone gray text for optimal readability */
     --primary-color: #4a6b52;    /* Matte Sage Green */
     --accent-color: #bfa38a;     /* Soft warm desert sand hue */
     --card-bg: #ffffff;
@@ -19,6 +19,7 @@ body {
     line-height: 1.7;
     background-color: var(--bg-color);
     color: var(--text-color);
+    overflow-x: hidden; /* Prevents accidental horizontal scrolling on mobile */
 }
 
 h1, h2, h3, nav a, .post-category, .read-more {
@@ -26,17 +27,18 @@ h1, h2, h3, nav a, .post-category, .read-more {
     letter-spacing: -0.01em;
 }
 
-/* Header & Identity Structures */
+/* Header & Navigation Identity Structures */
 header {
     background-color: #ffffff;
     border-bottom: 1px solid var(--border-color);
-    padding: 3.5rem 1rem 2.5rem 1rem;
+    padding: clamp(2rem, 5vw, 3.5rem) 1rem;
     text-align: center;
+    width: 100%;
 }
 
 .logo-area h1 {
     color: var(--primary-color);
-    font-size: 2.65rem;
+    font-size: clamp(1.8rem, 4vw, 2.65rem); /* Dynamically shrinks font size down on smaller screens */
     font-weight: 700;
     margin-bottom: 0.5rem;
     text-transform: lowercase;
@@ -50,7 +52,7 @@ header {
 .tagline {
     font-style: italic;
     color: #718096;
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
     margin-bottom: 1.5rem;
 }
 
@@ -58,17 +60,20 @@ nav {
     margin-top: 1.5rem;
     border-top: 1px solid #f1f5f9;
     padding-top: 1.25rem;
+    display: flex;
+    flex-wrap: wrap; /* Wraps nav links automatically if they run out of mobile width */
+    justify-content: center;
+    gap: 10px 20px; /* Provides safe structural vertical and horizontal spacing */
 }
 
 nav a {
     color: var(--text-color);
-    margin: 0 15px;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.2s ease;
 }
 
 nav a:hover {
@@ -77,9 +82,10 @@ nav a:hover {
 
 /* Layout Constraint Architecture */
 .container {
+    width: 100%;
     max-width: 840px;
-    margin: 3.5rem auto;
-    padding: 0 1.5rem;
+    margin: clamp(2rem, 6vw, 3.5rem) auto;
+    padding: 0 1rem; /* Adds defensive safe spaces on the left/right boundaries */
 }
 
 /* Editorial Fluid Card Component */
@@ -87,10 +93,13 @@ nav a:hover {
     background: var(--card-bg);
     border-radius: 12px;
     border: 1px solid var(--border-color);
-    margin-bottom: 3.5rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column; /* Stacks image straight over text block gracefully */
+    width: 100%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .post-card:hover {
@@ -98,17 +107,18 @@ nav a:hover {
     box-shadow: 0 15px 30px rgba(74, 107, 82, 0.06);
 }
 
-/* Fluid Post Imagery Layer */
+/* Fluid Responsive Post Imagery Layer */
 .post-image {
     width: 100%;
-    height: 380px;
+    height: clamp(200px, 40vw, 380px); /* Seamlessly transitions image height across device profiles */
     object-fit: cover;
     display: block;
     border-bottom: 1px solid var(--border-color);
 }
 
+/* Card Text Boundaries */
 .post-card-content {
-    padding: 2.75rem;
+    padding: clamp(1.5rem, 5vw, 2.75rem); /* Drastically cuts down internal white space on smartphones */
 }
 
 .post-category {
@@ -118,11 +128,11 @@ nav a:hover {
     letter-spacing: 0.12em;
     color: var(--accent-color);
     font-weight: 700;
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.6rem;
 }
 
 .post-card h2 {
-    font-size: 1.95rem;
+    font-size: clamp(1.4rem, 3.5vw, 1.95rem); /* Ensures titles fit perfectly on single/double mobile lines */
     margin-bottom: 0.85rem;
     line-height: 1.35;
     font-weight: 700;
@@ -141,27 +151,25 @@ nav a:hover {
 .post-meta {
     font-size: 0.85rem;
     color: #a0aec0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .post-content {
-    font-size: 1.125rem;
+    font-size: clamp(1rem, 2vw, 1.125rem); /* Scales down font thickness on tiny displays */
     color: #4a5568;
 }
 
 .read-more {
     display: inline-block;
-    margin-top: 1.75rem;
+    margin-top: 1.5rem;
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 700;
     font-size: 0.95rem;
-    transition: transform 0.2s ease;
 }
 
 .read-more:hover {
     text-decoration: underline;
-    transform: translateX(3px);
 }
 
 /* System State Presentation Layers */
@@ -169,29 +177,32 @@ nav a:hover {
     text-align: center;
     font-size: 1.15rem;
     color: #718096;
-    padding: 5rem 2rem;
+    padding: 4rem 1.5rem;
     background: #ffffff;
     border-radius: 12px;
     border: 1px solid var(--border-color);
+    margin: 0 1rem;
 }
 
 footer {
     text-align: center;
-    padding: 4rem 1rem;
+    padding: 3rem 1rem;
     background-color: #ffffff;
     border-top: 1px solid var(--border-color);
-    margin-top: 8rem;
+    margin-top: clamp(4rem, 10vw, 8rem);
     font-size: 0.9rem;
     color: #718096;
 }
 
-/* Clean Media Adaptive Breakpoints */
-@media (max-width: 768px) {
-    header { padding: 2.5rem 1rem 1.75rem 1rem; }
-    .logo-area h1 { font-size: 2.15rem; }
-    nav a { margin: 0 8px; font-size: 0.8rem; }
-    .container { margin: 2rem auto; }
-    .post-image { height: 230px; }
-    .post-card-content { padding: 1.75rem; }
-    .post-card h2 { font-size: 1.55rem; }
+/* Specific Extra Optimization For Ultra-Narrow Screens (Phones under 400px width) */
+@media (max-width: 400px) {
+    nav {
+        gap: 8px 12px;
+    }
+    nav a {
+        font-size: 0.75rem;
+    }
+    .post-card-content {
+        padding: 1.25rem;
+    }
 }
