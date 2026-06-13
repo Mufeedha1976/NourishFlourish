@@ -1,190 +1,171 @@
 document.addEventListener("DOMContentLoaded", () => {
     const postsContainer = document.getElementById("posts-container");
-    const navContainer = document.getElementById("nav-container");
-    const siteTitle = document.getElementById("site-title");
-    const siteTagline = document.getElementById("site-tagline");
+    const searchBar = document.getElementById("search-bar");
     const backToTopBtn = document.getElementById("back-to-top");
 
-    // ========================================================
-    // 💡 CONFIGURATION: LIVE GOOGLE SHEET CSV ENDPOINT LINK
-    // ========================================================
-    const SPREADSHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhYAohsI3t3K_yc9aOc272PKRKJXwwwcwo0Un_qgtP_3yyEhtQ-nNic20tkB197t2DWUHiGIlmPQ52/pub?output=csv";
+    // Connected to your live Apps Script bridge
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwONYUrHDhRXw8-YI1SUFMwIydXOr9IBXbU1yayFOZsWxZl6pyKZbjBstvJSNWk6-NE/exec";
+    
+    let allPosts = []; // Master array for the search filter
 
-    // Global Site Navigation & Theme Properties
-    const SITE_CONFIG = {
-        "siteName": "nourish & flourish",
-        "tagline": "Cultivating wellness, inside and out.",
-        "navigation": [
-            {"label": "Home", "link": "index.html"},
-            {"label": "Recipes", "link": "index.html?category=recipes"},
-            {"label": "Mindfulness", "link": "index.html?category=mindfulness"},
-            {"label": "About", "link": "index.html?page=about"},
-            {"label": "Contact", "link": "index.html?page=contact"}
-        ]
-    };
-
-    // 1. Render Basic UI Layout Framework 
-    if (siteTitle) siteTitle.textContent = SITE_CONFIG.siteName;
-    if (siteTagline) siteTagline.textContent = SITE_CONFIG.tagline;
-    if (navContainer) {
-        navContainer.innerHTML = SITE_CONFIG.navigation.map(item => 
-            `<a href="${item.link}">${item.label}</a>`
-        ).join("");
-    }
-
-    // 2. Fetch Live Rows From Google Sheets
+    // 1. Fetch JSON Data from your Apps Script
     function loadBlogData() {
-        fetch(SPREADSHEET_CSV_URL)
-            .then(res => {
-                if (!res.ok) throw new Error("Database connectivity issue");
-                return res.text();
-            })
-            .then(csvText => {
-                const posts = parseCSV(csvText);
-                renderBlogFeed(posts);
+        fetch(APPS_SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                // Sort backwards so newest ID is at the top
+                allPosts = data.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
+                renderBlogFeed(allPosts);
             })
             .catch(error => {
-                console.error("Failed to read database matrix array:", error);
-                if (postsContainer) {
-                    postsContainer.innerHTML = '<div class="error">Unable to sync articles. Please check your spreadsheet publishing status.</div>';
-                }
+                postsContainer.innerHTML = '<div class="error">Database communication issue. Please check API link.</div>';
             });
     }
 
     loadBlogData();
 
-    // Custom CSV Compiler Engine (Handles paragraphs, quotes, and commas gracefully)
-    function parseCSV(text) {
-        const lines = [];
-        let row = [""];
-        let inQuotes = false;
-
-        for (let i = 0; i < text.length; i++) {
-            let el = text[i];
-            let nextEl = text[i+1];
-
-            if (el === '"') {
-                if (inQuotes && nextEl === '"') { row[row.length - 1] += '"'; i++; }
-                else { inQuotes = !inQuotes; }
-            } else if (el === ',' && !inQuotes) {
-                row.push('');
-            } else if ((el === '\r' || el === '\n') && !inQuotes) {
-                if (el === '\r' && nextEl === '\n') { i++; }
-                lines.push(row);
-                row = [''];
-            } else {
-                row[row.length - 1] += el;
-            }
-        }
-        if (row.length > 1 || row[0] !== '') { lines.push(row); }
-        if (lines.length === 0) return [];
-
-        const headers = lines[0].map(h => h.trim());
-        const result = [];
-
-        for (let i = 1; i < lines.length; i++) {
-            const currentRow = lines[i];
-            if (currentRow.length < headers.length) continue;
-            
-            const obj = {};
-            headers.forEach((header, idx) => {
-                obj[header] = currentRow[idx] ? currentRow[idx].trim() : '';
-            });
-            result.push(obj);
-        }
-        return result;
+    // 2. Real-Time Search Engine Listener
+    if (searchBar) {
+        searchBar.addEventListener("input", (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allPosts.filter(post => 
+                (post.title && post.title.toLowerCase().includes(term)) || 
+                (post.content && post.content.toLowerCase().includes(term)) ||
+                (post.category && post.category.toLowerCase().includes(term))
+            );
+            renderBlogFeed(filtered);
+        });
     }
 
-    // 🌟 AUTOMATIC FORMATTER: Converts plain text line breaks into HTML paragraphs dynamically
+    // 3. Format Plain Text to HTML Paragraphs seamlessly
     function formatToParagraphs(rawText) {
         if (!rawText) return "";
-        return rawText
-            .split(/\r?\n/)
-            .filter(paragraph => paragraph.trim() !== "")
-            .map(paragraph => `<p>${paragraph.trim()}</p>`)
-            .join("");
+        return rawText.split(/\r?\n/).filter(p => p.trim() !== "").map(p => `<p>${p.trim()}</p>`).join("");
     }
 
-    // 3. Dynamic Blog Feed Render Component
+    // 4. Render Blog Feed (With Likes & Comments UI)
     function renderBlogFeed(posts) {
-        if (postsContainer && posts.length > 0) {
-            // Sort items by ID descending so the newest post ID remains at the top
-            const sortedPosts = posts.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0));
-
-            postsContainer.innerHTML = sortedPosts.map(post => {
-                // Process plain text column streams into formatted paragraph containers
-                const formattedExcerpt = formatToParagraphs(post.excerpt);
-                const formattedContent = formatToParagraphs(post.content);
-
-                return `
-                    <article class="post-card" id="post-${post.id}">
-                        ${post.image ? `<img src="${post.image}" alt="${post.title}" class="post-image">` : ''}
-                        
-                        <div class="post-card-content">
-                            <span class="post-category">${post.category}</span>
-                            <h2><a href="javascript:void(0);" class="toggle-trigger" data-id="${post.id}">${post.title}</a></h2>
-                            <div class="post-meta">Shared on <time datetime="${post.datetime}">${post.date}</time></div>
-                            
-                            <div class="post-excerpt" id="excerpt-${post.id}">
-                                ${formattedExcerpt}
-                            </div>
-
-                            <div class="full-content" id="content-${post.id}" style="display: none;">
-                                ${formattedContent}
-                            </div>
-                            
-                            <a href="javascript:void(0);" class="read-more" data-id="${post.id}">Continue Reading &rarr;</a>
-                        </div>
-                    </article>
-                `;
-            }).join("");
-
-            setupReadingToggle();
-        } else {
-            postsContainer.innerHTML = '<div class="error">No posts found. Add row entries inside your database sheet spreadsheet to show files.</div>';
+        if (!postsContainer) return;
+        if (posts.length === 0) {
+            postsContainer.innerHTML = '<div class="error">No articles found matching your search.</div>';
+            return;
         }
+
+        postsContainer.innerHTML = posts.map(post => {
+            // Safely parse the comments JSON string from the sheet
+            let comments = [];
+            try { if (post.comments && post.comments !== "[]") comments = JSON.parse(post.comments); } 
+            catch(e) { comments = []; }
+            
+            const likes = post.likes || 0;
+
+            return `
+            <article class="post-card" id="post-${post.id}">
+                ${post.image ? `<img src="${post.image}" alt="${post.title}" class="post-image">` : ''}
+                <div class="post-card-content">
+                    <span class="post-category">${post.category}</span>
+                    <h2><a href="javascript:void(0);" class="toggle-trigger" data-id="${post.id}">${post.title}</a></h2>
+                    <div class="post-meta">Shared on <time>${post.date}</time></div>
+                    
+                    <div class="post-excerpt" id="excerpt-${post.id}">
+                        ${formatToParagraphs(post.excerpt)}
+                    </div>
+                    
+                    <div class="full-content" id="content-${post.id}" style="display: none;">
+                        ${formatToParagraphs(post.content)}
+                        
+                        <div class="engagement-bar">
+                            <button class="btn-like" data-id="${post.id}">❤️ Love this! (${likes})</button>
+                        </div>
+
+                        <div class="comments-section">
+                            <h3>Community Thoughts (${comments.length})</h3>
+                            <div class="comments-list">
+                                ${comments.map(c => `
+                                    <div class="comment-item">
+                                        <strong>${c.name}</strong> <span>${c.timestamp}</span>
+                                        <p>${c.text}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="add-comment-box">
+                                <input type="text" id="comment-name-${post.id}" placeholder="Your Name">
+                                <textarea id="comment-text-${post.id}" rows="2" placeholder="Share your thoughts..."></textarea>
+                                <button class="btn-submit-comment" data-id="${post.id}">Post Comment</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <a href="javascript:void(0);" class="read-more" data-id="${post.id}">Continue Reading &rarr;</a>
+                </div>
+            </article>
+        `}).join("");
     }
 
-    // 4. Inline Content Visibility Controller
-    function setupReadingToggle() {
-        postsContainer.addEventListener("click", (e) => {
-            const target = e.target;
-            if (target.classList.contains("read-more") || target.classList.contains("toggle-trigger")) {
-                e.preventDefault();
-                const id = target.getAttribute("data-id");
-                const excerptDiv = document.getElementById(`excerpt-${id}`);
-                const contentDiv = document.getElementById(`content-${id}`);
-                const readMoreBtn = document.querySelector(`.read-more[data-id="${id}"]`);
+    // 5. Global Click Router (Handles Expand, Likes, and Comments)
+    postsContainer.addEventListener("click", (e) => {
+        const target = e.target;
+        const id = target.getAttribute("data-id");
 
-                if (contentDiv && excerptDiv) {
-                    if (contentDiv.style.display === "none") {
-                        contentDiv.style.display = "block";
-                        excerptDiv.style.display = "none";
-                        if (readMoreBtn) readMoreBtn.innerHTML = "&larr; Show Less";
-                    } else {
-                        contentDiv.style.display = "none";
-                        excerptDiv.style.display = "block";
-                        if (readMoreBtn) readMoreBtn.innerHTML = "Continue Reading &rarr;";
-                        
-                        // Smoothly scroll the page window context back up to the top of the reading box
-                        document.getElementById(`post-${id}`).scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
+        // Expand/Collapse Article
+        if (target.classList.contains("read-more") || target.classList.contains("toggle-trigger")) {
+            e.preventDefault();
+            const excerpt = document.getElementById(`excerpt-${id}`);
+            const content = document.getElementById(`content-${id}`);
+            const btn = document.querySelector(`.read-more[data-id="${id}"]`);
+            
+            if (content.style.display === "none") {
+                content.style.display = "block"; 
+                excerpt.style.display = "none"; 
+                if(btn) btn.innerHTML = "&larr; Show Less";
+            } else {
+                content.style.display = "none"; 
+                excerpt.style.display = "block"; 
+                if(btn) btn.innerHTML = "Continue Reading &rarr;";
+                document.getElementById(`post-${id}`).scrollIntoView({ behavior: 'smooth' });
             }
+        }
+
+        // Handle Liking
+        if (target.classList.contains("btn-like")) {
+            target.innerHTML = "Processing...";
+            target.disabled = true;
+            postDataToAPI({ action: "like", id: id }).then(() => loadBlogData());
+        }
+
+        // Handle Commenting
+        if (target.classList.contains("btn-submit-comment")) {
+            const nameField = document.getElementById(`comment-name-${id}`);
+            const textField = document.getElementById(`comment-text-${id}`);
+            
+            if(!nameField.value || !textField.value) {
+                alert("Please fill out both your name and comment.");
+                return;
+            }
+            
+            target.innerHTML = "Posting...";
+            target.disabled = true;
+            postDataToAPI({ action: "addComment", id: id, name: nameField.value, text: textField.value })
+                .then(() => loadBlogData());
+        }
+    });
+
+    // 6. Universal API Poster Function (Uses text/plain to avoid CORS)
+    async function postDataToAPI(payload) {
+        return fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify(payload)
         });
     }
 
-    // 5. Scroll Elevation Tracking Back to Top Module
+    // 7. Scroll Elevation Back to Top
     if (backToTopBtn) {
         window.addEventListener("scroll", () => {
-            if (window.scrollY > 400) {
-                backToTopBtn.classList.add("visible");
-            } else {
-                backToTopBtn.classList.remove("visible");
-            }
+            if (window.scrollY > 400) backToTopBtn.classList.add("visible");
+            else backToTopBtn.classList.remove("visible");
         });
-        backToTopBtn.addEventListener("click", () => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        });
+        backToTopBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
     }
 });
